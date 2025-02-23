@@ -52,6 +52,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case views.ConfirmInput:
+			if m.focusIndex == len(options) - 1 {
+				return m, tea.Quit
+			}
+
 			views.AddViewToHistory(m)
 			new := actions[m.focusIndex]()
 			return new, new.Init()

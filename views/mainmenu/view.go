@@ -52,7 +52,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case views.ConfirmInput:
-			if m.focusIndex == len(options) - 1 {
+			if m.focusIndex == len(options)-1 {
 				return m, tea.Quit
 			}
 

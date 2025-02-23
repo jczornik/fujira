@@ -3,12 +3,14 @@ package config
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 )
 
-const (
-	confFile = "/home/jczornik/.config/fujira.conf"
+var (
+	userConf, _ = os.UserConfigDir()
+	confPath    = fmt.Sprint(userConf, "/fujira.conf")
 )
 
 var conf *Config
@@ -48,9 +50,9 @@ func (c *Config) Save() error {
 
 	log.Println("Saving setting: ", string(buff))
 
-	f, err := os.OpenFile(confFile, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0600)
+	f, err := os.OpenFile(confPath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Println("Cannot open/create conf file: ", confFile)
+		log.Println("Cannot open/create conf file: ", confPath)
 		return err
 	}
 	defer f.Close()
@@ -78,7 +80,7 @@ func (b *BasicAuth) GetToken() string {
 }
 
 func loadFromFile() (*Config, error) {
-	buff, err := os.ReadFile(confFile)
+	buff, err := os.ReadFile(confPath)
 	if err != nil {
 		return nil, err
 	}

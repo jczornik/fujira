@@ -6,3 +6,6 @@ debug:
 
 fmt:
 	gofmt -s -w .
+
+check:
+	gocritic check ./...

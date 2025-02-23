@@ -1,5 +1,5 @@
 {
-  description = "A Nix-flake-based aws - go development environment";
+  description = "A Nix-flake-based go development environment";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";

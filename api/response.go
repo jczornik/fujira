@@ -73,7 +73,6 @@ func parseHttpResponse(response *http.Response) (serverResponseSuccess, requestE
 	}
 
 	var success serverResponseSuccess
-	defer response.Body.Close()
 	code := response.StatusCode
 	body, err := io.ReadAll(response.Body)
 	if err != nil {

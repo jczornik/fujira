@@ -14,8 +14,7 @@ func GetDim() (int, int) {
 func HandleGlobal(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch MapKeyToType(msg.String()) {
-		case ExitInput:
+		if MapKeyToType(msg.String()) == ExitInput {
 			return tea.Quit
 		}
 

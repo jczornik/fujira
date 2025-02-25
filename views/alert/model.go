@@ -33,8 +33,7 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch views.MapKeyToType(msg.String()) {
-		case views.ConfirmInput:
+		if views.MapKeyToType(msg.String()) == views.ConfirmInput {
 			return m.nextView, m.nextCmd
 		}
 	}

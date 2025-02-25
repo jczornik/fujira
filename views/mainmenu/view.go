@@ -63,7 +63,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	cmd := views.HandleGlobal(msg)
-
 	return m, cmd
 }
 

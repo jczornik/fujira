@@ -6,7 +6,6 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jczornik/fujira/views"
 )
 
 type model struct {
@@ -36,11 +35,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return msg.Model, nil
 	}
 
-	gcmd := views.HandleGlobal(msg)
-
 	var cmd tea.Cmd
 	m.spinner, cmd = m.spinner.Update(msg)
-	return m, tea.Batch(cmd, gcmd)
+	return m, cmd
 }
 
 func (m model) View() string {

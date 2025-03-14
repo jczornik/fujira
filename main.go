@@ -6,6 +6,8 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/jczornik/fujira/views"
 	"github.com/jczornik/fujira/views/mainmenu"
 )
 
@@ -21,7 +23,7 @@ func main() {
 	}
 
 	log.Println("Starting program")
-	if _, err := tea.NewProgram(mainmenu.InitialModel(), tea.WithAltScreen()).Run(); err != nil {
+	if _, err := tea.NewProgram(views.InitialModel(mainmenu.InitialModel()), tea.WithAltScreen()).Run(); err != nil {
 		fmt.Printf("could not start program: %s\n", err)
 		os.Exit(1)
 	}

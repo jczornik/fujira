@@ -8,6 +8,7 @@ import (
 	"github.com/jczornik/fujira/views"
 
 	"github.com/charmbracelet/bubbles/cursor"
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -85,9 +86,8 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		inputType := views.MapKeyToType(msg.String())
-		switch inputType {
-		case views.ConfirmInput:
+		switch {
+		case key.Matches(msg, views.GlobalKeys.Confirm):
 			if m.focusIndex == len(m.inputs) {
 				c := config.GetConfig()
 
@@ -103,18 +103,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return views.GetPrevView()
 			}
 
-		case views.NextInput:
+		case key.Matches(msg, views.GlobalKeys.Next):
 			m.focusIndex = (m.focusIndex + 1) % (len(m.inputs) + 2)
 
-		case views.PrevInput:
+		case key.Matches(msg, views.GlobalKeys.Prev):
 			m.focusIndex--
 			if m.focusIndex < 0 {
 				m.focusIndex = len(m.inputs) + 1
 			}
 		}
 
-		if inputType != views.UnknownInput {
-			cmds := make([]tea.Cmd, len(m.inputs)+1)
+		// if inputType != views.UnknownInput {
+			cmds := make([]tea.Cmd, len(m.inputs))
 			for i := 0; i <= len(m.inputs)-1; i++ {
 				if i == m.focusIndex {
 					// Set focused state
@@ -129,10 +129,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.inputs[i].TextStyle = noStyle
 			}
 
-			cmds[len(m.inputs)] = views.HandleGlobal(msg)
-
 			return m, tea.Batch(cmds...)
-		}
+		// }
 
 	}
 

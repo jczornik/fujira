@@ -72,6 +72,8 @@ func parseHttpResponse(response *http.Response) (serverResponseSuccess, requestE
 		return serverResponseSuccess{response}, nil
 	}
 
+	defer response.Body.Close()
+
 	var success serverResponseSuccess
 	code := response.StatusCode
 	body, err := io.ReadAll(response.Body)

@@ -2,15 +2,51 @@ package views
 
 import (
 	"slices"
+
+	"github.com/charmbracelet/bubbles/key"
 )
 
-const (
-	ExitInput = iota
-	NextInput
-	PrevInput
-	ConfirmInput
-	UnknownInput
-)
+type keyMap struct {
+	Exit    key.Binding
+	Next  key.Binding
+	Prev  key.Binding
+	Confirm key.Binding
+	Help  key.Binding
+}
+
+func (k keyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.Help, k.Exit}
+}
+
+func (k keyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{
+		{k.Next, k.Prev, k.Confirm},
+		{k.Help, k.Exit},
+	}
+}
+
+var GlobalKeys = keyMap{
+	Prev: key.NewBinding(
+		key.WithKeys("ctrl+p", "up", "shift+tab"),
+		key.WithHelp("↑/ctrl+p/shift+tab", "move up"),
+	),
+	Next: key.NewBinding(
+		key.WithKeys("ctrl+n", "down", "tab"),
+		key.WithHelp("↓/ctrl+n/tab", "move down"),
+	),
+	Help: key.NewBinding(
+		key.WithKeys("ctrl+h"),
+		key.WithHelp("ctrl+h", "toggle help"),
+	),
+	Exit: key.NewBinding(
+		key.WithKeys("ctrl+c"),
+		key.WithHelp("ctrl+c", "quit"),
+	),
+	Confirm: key.NewBinding(
+		key.WithKeys("enter"),
+		key.WithHelp("enter", "confirm"),
+	),
+}
 
 var (
 	exitSeq    = []string{"esc", "ctrl+c"}
@@ -20,26 +56,3 @@ var (
 
 	AllSeq = slices.Concat(exitSeq, nextSeq, prevSeq, confirmSeq)
 )
-
-func MapKeyToType(key string) uint8 {
-	isIn := func(seq []string) bool {
-		return slices.Contains(seq, key)
-	}
-
-	switch {
-	case isIn(exitSeq):
-		return ExitInput
-
-	case isIn(nextSeq):
-		return NextInput
-
-	case isIn(prevSeq):
-		return PrevInput
-
-	case isIn(confirmSeq):
-		return ConfirmInput
-
-	default:
-		return UnknownInput
-	}
-}

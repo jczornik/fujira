@@ -3,9 +3,11 @@ package infinitloader
 import (
 	"fmt"
 
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jczornik/fujira/views/common"
 )
 
 type model struct {
@@ -15,10 +17,10 @@ type model struct {
 }
 
 type Finished struct {
-	Model tea.Model
+	Model common.Widget
 }
 
-func InitialModel(msg string, action tea.Cmd) tea.Model {
+func InitialModel(msg string, action tea.Cmd) common.Widget {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
@@ -29,7 +31,7 @@ func (m model) Init() tea.Cmd {
 	return tea.Batch(m.spinner.Tick, m.action)
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (common.Widget, tea.Cmd) {
 	switch msg := msg.(type) {
 	case Finished:
 		return msg.Model, nil
@@ -42,4 +44,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	return fmt.Sprint(m.spinner.View(), m.msg)
+}
+
+func (m model) Help() help.KeyMap {
+	return nil
 }

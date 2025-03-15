@@ -1,20 +1,20 @@
-package views
+package common
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type ViewHistory []tea.Model
+type ViewHistory []Widget
 
 var (
 	history = ViewHistory{}
 )
 
-func (h *ViewHistory) Push(m tea.Model) {
+func (h *ViewHistory) Push(m Widget) {
 	*h = append(*h, m)
 }
 
-func (h *ViewHistory) Pop() tea.Model {
+func (h *ViewHistory) Pop() Widget {
 	if len(*h) == 0 {
 		return nil
 	}
@@ -26,7 +26,7 @@ func (h *ViewHistory) Pop() tea.Model {
 	return ret
 }
 
-func GetPrevView() (tea.Model, tea.Cmd) {
+func GetPrevView() (Widget, tea.Cmd) {
 	prev := history.Pop()
 	if prev == nil {
 		return prev, tea.Quit
@@ -35,6 +35,6 @@ func GetPrevView() (tea.Model, tea.Cmd) {
 	return prev, nil
 }
 
-func AddViewToHistory(m tea.Model) {
+func AddViewToHistory(m Widget) {
 	history.Push(m)
 }

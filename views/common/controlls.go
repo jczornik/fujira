@@ -1,4 +1,4 @@
-package views
+package common
 
 import (
 	"slices"
@@ -8,10 +8,10 @@ import (
 
 type keyMap struct {
 	Exit    key.Binding
-	Next  key.Binding
-	Prev  key.Binding
+	Next    key.Binding
+	Prev    key.Binding
 	Confirm key.Binding
-	Help  key.Binding
+	Help    key.Binding
 }
 
 func (k keyMap) ShortHelp() []key.Binding {

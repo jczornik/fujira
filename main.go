@@ -7,8 +7,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/jczornik/fujira/views"
 	"github.com/jczornik/fujira/views/mainmenu"
+	"github.com/jczornik/fujira/views/wrapper"
 )
 
 func main() {

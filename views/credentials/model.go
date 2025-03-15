@@ -5,9 +5,10 @@ import (
 	"strings"
 
 	"github.com/jczornik/fujira/config"
-	"github.com/jczornik/fujira/views"
+	"github.com/jczornik/fujira/views/common"
 
 	"github.com/charmbracelet/bubbles/cursor"
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -15,16 +16,16 @@ import (
 )
 
 var (
-	cursorStyle         = views.FocusedStyle
+	cursorStyle         = common.FocusedStyle
 	noStyle             = lipgloss.NewStyle()
-	helpStyle           = views.BlurredStyle
+	helpStyle           = common.BlurredStyle
 	cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
 
-	fSubmitButton = views.FocusedStyle.Render("[ Submit ]")
-	bSubmitButton = fmt.Sprintf("[ %s ]", views.BlurredStyle.Render("Submit"))
+	fSubmitButton = common.FocusedStyle.Render("[ Submit ]")
+	bSubmitButton = fmt.Sprintf("[ %s ]", common.BlurredStyle.Render("Submit"))
 
-	fCancelButton = views.FocusedStyle.Render("[ Cancel ]")
-	bCancelButton = fmt.Sprintf("[ %s ]", views.BlurredStyle.Render("Cancel"))
+	fCancelButton = common.FocusedStyle.Render("[ Cancel ]")
+	bCancelButton = fmt.Sprintf("[ %s ]", common.BlurredStyle.Render("Cancel"))
 )
 
 type model struct {
@@ -33,7 +34,7 @@ type model struct {
 	cursorMode cursor.Mode
 }
 
-func InitialModel() tea.Model {
+func InitialModel() common.Widget {
 	m := model{
 		inputs: make([]textinput.Model, 2),
 	}
@@ -63,8 +64,8 @@ func InitialModel() tea.Model {
 				t.SetValue(email)
 			}
 			t.Focus()
-			t.PromptStyle = views.FocusedStyle
-			t.TextStyle = views.FocusedStyle
+			t.PromptStyle = common.FocusedStyle
+			t.TextStyle = common.FocusedStyle
 		case 1:
 			if token == "" {
 				t.Placeholder = "token"
@@ -83,11 +84,11 @@ func (m model) Init() tea.Cmd {
 	return tea.Batch(textinput.Blink)
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (common.Widget, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, views.GlobalKeys.Confirm):
+		case key.Matches(msg, common.GlobalKeys.Confirm):
 			if m.focusIndex == len(m.inputs) {
 				c := config.GetConfig()
 
@@ -100,13 +101,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// TODO: run infinit loader and check
 				return checkCredentialsView(m)
 			} else if m.focusIndex == len(m.inputs)+1 {
-				return views.GetPrevView()
+				return common.GetPrevView()
 			}
 
-		case key.Matches(msg, views.GlobalKeys.Next):
+		case key.Matches(msg, common.GlobalKeys.Next):
 			m.focusIndex = (m.focusIndex + 1) % (len(m.inputs) + 2)
 
-		case key.Matches(msg, views.GlobalKeys.Prev):
+		case key.Matches(msg, common.GlobalKeys.Prev):
 			m.focusIndex--
 			if m.focusIndex < 0 {
 				m.focusIndex = len(m.inputs) + 1
@@ -114,22 +115,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		// if inputType != views.UnknownInput {
-			cmds := make([]tea.Cmd, len(m.inputs))
-			for i := 0; i <= len(m.inputs)-1; i++ {
-				if i == m.focusIndex {
-					// Set focused state
-					cmds[i] = m.inputs[i].Focus()
-					m.inputs[i].PromptStyle = views.FocusedStyle
-					m.inputs[i].TextStyle = views.FocusedStyle
-					continue
-				}
-				// Remove focused state
-				m.inputs[i].Blur()
-				m.inputs[i].PromptStyle = noStyle
-				m.inputs[i].TextStyle = noStyle
+		cmds := make([]tea.Cmd, len(m.inputs))
+		for i := 0; i <= len(m.inputs)-1; i++ {
+			if i == m.focusIndex {
+				// Set focused state
+				cmds[i] = m.inputs[i].Focus()
+				m.inputs[i].PromptStyle = common.FocusedStyle
+				m.inputs[i].TextStyle = common.FocusedStyle
+				continue
 			}
+			// Remove focused state
+			m.inputs[i].Blur()
+			m.inputs[i].PromptStyle = noStyle
+			m.inputs[i].TextStyle = noStyle
+		}
 
-			return m, tea.Batch(cmds...)
+		return m, tea.Batch(cmds...)
 		// }
 
 	}
@@ -173,4 +174,8 @@ func (m model) View() string {
 	fmt.Fprintf(&b, "\n\n%s\t\t%s\n\n", *confirm, *cancel)
 
 	return b.String()
+}
+
+func (m model) Help() help.KeyMap {
+	return nil
 }

@@ -34,7 +34,7 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (common.Widget, tea.Cmd) {
 	switch msg := msg.(type) {
 	case Finished:
-		return msg.Model, nil
+		return msg.Model, msg.Model.Init()
 	}
 
 	var cmd tea.Cmd

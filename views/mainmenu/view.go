@@ -94,7 +94,7 @@ func (m model) Update(msg tea.Msg) (common.Widget, tea.Cmd) {
 
 func (m model) View() string {
 	var b strings.Builder
-	for key := 0; key < len(options); key++ {
+	for key := range len(options) {
 		value := options[key]
 		if m.focusIndex == key {
 			b.WriteString(common.FocusedStyle.Render(fmt.Sprintf("[ %s ]", value)) + "\n")

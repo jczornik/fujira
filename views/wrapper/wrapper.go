@@ -1,6 +1,7 @@
 package views
 
 import (
+	"log"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -9,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jczornik/fujira/views/common"
+	"github.com/jczornik/fujira/views/messages"
 )
 
 const (
@@ -66,6 +68,7 @@ func (m *model) Init() tea.Cmd {
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+	var processed tea.Msg
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -85,10 +88,24 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		m.help.Width = msg.Width
 		m.updateViewportDim()
+
+		processed = messages.ResizeMsg{Width: m.viewport.Width, Height: m.viewport.Height}
+		// m.internal, cmd = m.internal.Update(newMsg)
+		// m.viewport.SetContent(m.internal.View())
+		// return m, cmd
+
+	case messages.DimRequest:
+		log.Println(m.viewport.Width, "x", m.viewport.Height)
+		processed = messages.ResizeMsg{Width: m.viewport.Width, Height: m.viewport.Height}
+	}
+
+	if processed == nil {
+		processed = msg
 	}
 
 	var vcmd tea.Cmd
-	m.internal, cmd = m.internal.Update(msg)
+
+	m.internal, cmd = m.internal.Update(processed)
 	m.viewport.SetContent(m.internal.View())
 	m.viewport, vcmd = m.viewport.Update(msg)
 	return m, tea.Batch(vcmd, cmd)

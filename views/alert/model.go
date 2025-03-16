@@ -32,7 +32,7 @@ func InitialModel(msg string, nextView common.Widget, nextCmd tea.Cmd) common.Wi
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return func() tea.Msg { return messages.DimRequest{} }
 }
 
 func (m model) Update(msg tea.Msg) (common.Widget, tea.Cmd) {

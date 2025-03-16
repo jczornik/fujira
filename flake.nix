@@ -13,6 +13,7 @@
         inherit system;
       };
     in pkgs.mkShell {
+      hardeningDisable = [ "fortify" ];
       packages = with pkgs; [
         go
         gopls

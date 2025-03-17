@@ -5,4 +5,4 @@ type ResizeMsg struct {
 	Height int
 }
 
-type DimRequest struct {}
+type DimRequest struct{}

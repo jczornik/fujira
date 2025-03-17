@@ -85,6 +85,8 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (common.Widget, tea.Cmd) {
+	handled := false
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -106,45 +108,42 @@ func (m model) Update(msg tea.Msg) (common.Widget, tea.Cmd) {
 
 		case key.Matches(msg, common.GlobalKeys.Next):
 			m.focusIndex = (m.focusIndex + 1) % (len(m.inputs) + 2)
+			handled = true
 
 		case key.Matches(msg, common.GlobalKeys.Prev):
 			m.focusIndex--
 			if m.focusIndex < 0 {
 				m.focusIndex = len(m.inputs) + 1
 			}
+			handled = true
 		}
+	}
 
-		// if inputType != views.UnknownInput {
+	if handled == true {
 		cmds := make([]tea.Cmd, len(m.inputs))
 		for i := 0; i <= len(m.inputs)-1; i++ {
 			if i == m.focusIndex {
-				// Set focused state
 				cmds[i] = m.inputs[i].Focus()
 				m.inputs[i].PromptStyle = common.FocusedStyle
 				m.inputs[i].TextStyle = common.FocusedStyle
 				continue
 			}
-			// Remove focused state
+
 			m.inputs[i].Blur()
 			m.inputs[i].PromptStyle = noStyle
 			m.inputs[i].TextStyle = noStyle
 		}
 
 		return m, tea.Batch(cmds...)
-		// }
-
+	} else {
+		cmd := m.updateInputs(msg)
+		return m, cmd
 	}
-
-	// Handle character input and blinking
-	cmd := m.updateInputs(msg)
-	return m, cmd
 }
 
 func (m *model) updateInputs(msg tea.Msg) tea.Cmd {
 	cmds := make([]tea.Cmd, len(m.inputs))
 
-	// Only text inputs with Focus() set will respond, so it's safe to simply
-	// update all of them here without any further logic.
 	for i := range m.inputs {
 		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
 	}
